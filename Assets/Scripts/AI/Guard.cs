@@ -1,12 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class Guard : MonoBehaviour
 {
     public WBlackboard blackboard;
+    public TaskStatus currentTreeStatus;
     private BTBaseNode tree;
     private NavMeshAgent agent;
     private Animator animator;
@@ -19,14 +21,29 @@ public class Guard : MonoBehaviour
 
     private void Start()
     {
-        tree = new EntryNode().SetBlackboard(blackboard)
-            .Append(new DebugLogNode("Epic message")
-            );
+        tree = new EntryNode().SetBlackboard(blackboard).SetExecutor(this)
+            .Append(new SequenceNode()
+                .Append(new BlackboardOperation<AIPath>("Path",BlackboardOperationType.ReadReference))
+                .Append(new AISetPath())
+                .Append(new AIIndexToBlackboard("guardIndex"))
+                .Append(new AIGoalToBlackboard("guardGoal"))
+                .Append(new ConditionalNode(() =>
+                    {
+                        if (blackboard.TryGetVariable("guardIndex", out int index) &&
+                            blackboard.TryGetVariable("guardGoal", out int goal))
+                        {
+                            return index == goal;
+                        }
+                        return false;
+                    })
+                    .Append(new AINextPoint())
+                    .Append(new AINavigateToPoint())
+            )).Build();
     }
 
     private void FixedUpdate()
     {
-        tree?.Run();
+        currentTreeStatus = tree?.RunNode() ?? TaskStatus.Failed;
     }
 
     //private void OnDrawGizmos()

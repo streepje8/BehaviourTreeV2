@@ -23,7 +23,7 @@ public class Rogue : MonoBehaviour
 
     private void FixedUpdate()
     {
-        tree?.Run();
+        tree?.RunNode();
     }
 
     //private void OnDrawGizmos()

@@ -8,6 +8,6 @@ public class EntryNode : BTBaseNode
     
     public override TaskStatus Run()
     {
-        return children[0]?.Run() ?? TaskStatus.Success;
+        return children[0]?.RunNode() ?? TaskStatus.Success;
     }
 }
