@@ -42,10 +42,9 @@ public enum BlackboardOperationType
 [Serializable]
 public class WBlackboard
 {
-    [Header("Variables and references")]
-    public List<Variable<System.Object>> variables = new List<Variable<System.Object>>();
     public List<Reference<Object>> references = new List<Reference<Object>>();
-
+    
+    [HideInInspector]public List<Variable<System.Object>> variables = new List<Variable<System.Object>>();
     [HideInInspector] public Dictionary<string, System.Object> realtimeVariables = new Dictionary<string, System.Object>();
     [HideInInspector] public Dictionary<string, Object> realtimeReferences = new Dictionary<string, Object>();
     [HideInInspector] public BTBaseNode lastExecutedNode = null;

@@ -37,6 +37,10 @@ public class Player : MonoBehaviour, IDamageable
         }
         mainCollider.enabled = true;
         rb.isKinematic = false;
+        GetComponent<SignalReciever>().AddReciever("PlayerHIT", (MonoBehaviour enemy) =>
+        {
+            TakeDamage(enemy.gameObject, 1);
+        });
     }
 
     // Update is called once per frame

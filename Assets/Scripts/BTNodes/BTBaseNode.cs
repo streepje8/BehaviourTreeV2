@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using UnityEditor;
 using UnityEngine;
 
 public enum TaskStatus { Success, Failed, Running }
@@ -12,6 +14,7 @@ public abstract class BTBaseNode
     public virtual int maxChildCount { get; private set; } = 0;
     public BTBaseNode parent;
     public BTBaseNode[] children = Array.Empty<BTBaseNode>();
+    public GUID guid = GUID.Generate();
 
     public virtual TaskStatus RunNode()
     {
@@ -71,4 +74,69 @@ public abstract class BTBaseNode
         }
         return this;
     }
+
+    #if UNITY_EDITOR
+    
+    /*
+     * All the below code is only used to generate a visual, it has been written in a very ugly and slow way
+     */
+    
+    public string toPlantUML() //WARNING THIS IS VERY SLOW!!!!!
+    {
+        string result = "@startuml\n";
+        result += getPlantUMLDefenitions();
+        result += getPlantUMLConnections();
+        result += "\n@enduml";
+        return result;
+    }
+
+    private string getPlantUMLConnections()
+    {
+        string result = "";
+        string myname =  guid.GetHashCode().ToString().Replace("-","0");
+        bool isConditional = GetType() == typeof(ConditionalNode);
+        bool isSequential = GetType() == typeof(SequenceNode);
+        int index = 0;
+        foreach (var child in children)
+        {
+            result += child.getPlantUMLConnections();
+            string childname = child.guid.GetHashCode().ToString().Replace("-","0");
+            result += myname + " -down-|> " + childname + (isConditional ? index == 0 ? " : True" : " : False" : (isSequential ? " : " + (index + 1) : "")) + "\n";
+            index++;
+        }
+        return result;
+    }
+
+    private HashSet<string> ignoredFields = new HashSet<string>()
+    {
+        "ignoredFields",
+        "blackboard",
+        "executor",
+        "maxChildCount",
+        "parent",
+        "children",
+        "guid",
+        "onRun"
+    };
+
+    private string getPlantUMLDefenitions()
+    {
+        string result = "";
+        foreach (var child in children)
+        {
+            result += child.getPlantUMLDefenitions();
+        }
+        result += "class " + guid.GetHashCode().ToString().Replace("-","0") + " {\n --" + GetType().Name.Replace("`1","") + "--\n";
+        FieldInfo[] myFields = GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Default | BindingFlags.Static | BindingFlags.Instance);
+        foreach (var fieldInfo in myFields)
+        {
+            if (!ignoredFields.Contains(fieldInfo.Name))
+            {
+                result += " +" + fieldInfo.Name + ":" + fieldInfo.GetValue(this) + "\n";
+            }
+        }
+        result += "}\n";
+        return result;
+    }
+    #endif
 }
