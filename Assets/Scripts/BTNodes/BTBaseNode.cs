@@ -81,16 +81,16 @@ public abstract class BTBaseNode
      * All the below code is only used to generate a visual, it has been written in a very ugly and slow way
      */
     
-    public string toPlantUML() //WARNING THIS IS VERY SLOW!!!!!
+    public string ToPlantUML() //WARNING THIS IS VERY SLOW!!!!!
     {
         string result = "@startuml\n";
-        result += getPlantUMLDefenitions();
-        result += getPlantUMLConnections();
+        result += GetPlantUMLDefenitions();
+        result += GetPlantUMLConnections();
         result += "\n@enduml";
         return result;
     }
 
-    private string getPlantUMLConnections()
+    private string GetPlantUMLConnections()
     {
         string result = "";
         string myname =  guid.GetHashCode().ToString().Replace("-","0");
@@ -99,7 +99,7 @@ public abstract class BTBaseNode
         int index = 0;
         foreach (var child in children)
         {
-            result += child.getPlantUMLConnections();
+            result += child.GetPlantUMLConnections();
             string childname = child.guid.GetHashCode().ToString().Replace("-","0");
             result += myname + " -down-|> " + childname + (isConditional ? index == 0 ? " : True" : " : False" : (isSequential ? " : " + (index + 1) : "")) + "\n";
             index++;
@@ -116,15 +116,16 @@ public abstract class BTBaseNode
         "parent",
         "children",
         "guid",
-        "onRun"
+        "onRun",
+        "conditionEvaluator"
     };
 
-    private string getPlantUMLDefenitions()
+    private string GetPlantUMLDefenitions()
     {
         string result = "";
         foreach (var child in children)
         {
-            result += child.getPlantUMLDefenitions();
+            result += child.GetPlantUMLDefenitions();
         }
         result += "class " + guid.GetHashCode().ToString().Replace("-","0") + " {\n --" + GetType().Name.Replace("`1","") + "--\n";
         FieldInfo[] myFields = GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Default | BindingFlags.Static | BindingFlags.Instance);

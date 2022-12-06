@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -109,7 +110,12 @@ public class WBlackboard
     {
         if (realtimeVariables.TryGetValue(name, out object val))
         {
-            if (val.GetType() == typeof(T) || val.GetType().IsSubclassOf(typeof(T)))
+            bool isValidCast = true;
+            try
+            { _ = (T)val; }
+            catch (Exception e)
+            { isValidCast = false;}
+            if (val.GetType() == typeof(T) || val.GetType().IsSubclassOf(typeof(T)) || isValidCast)
             {
                 value = (T)val;
                 return true;

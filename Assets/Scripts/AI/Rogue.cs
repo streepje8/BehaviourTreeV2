@@ -1,24 +1,24 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEditor;
-using UnityEngine.AI;
+﻿using UnityEngine;
+
+public enum RogueState
+{
+    FollowPlayer,
+    CoverSearch,
+    Hiding
+}
 
 public class Rogue : MonoBehaviour
 {
-
+    public WBlackboard blackboard;
     private BTBaseNode tree;
-    private NavMeshAgent agent;
-    private Animator animator;
-    private void Awake()
-    {
-        agent = GetComponent<NavMeshAgent>();
-        animator = GetComponentInChildren<Animator>();
-    }
 
     private void Start()
     {
-        //TODO: Create your Behaviour tree here
+        tree = new EntryNode().SetBlackboard(blackboard).SetExecutor(this)
+            .Append(new SequenceNode()
+                .Append(new BlackboardOperation<GameObject>("Player", BlackboardOperationType.ReadReference))
+                .Append(new AINavigatePosition(true))
+            ).Build();
     }
 
     private void FixedUpdate()

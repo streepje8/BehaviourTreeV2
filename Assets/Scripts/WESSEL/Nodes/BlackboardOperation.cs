@@ -35,8 +35,7 @@ public class BlackboardOperation<T> : BTBaseNode
                 {
                     if (typeof(T) == outputVal.GetType())
                     {
-                        value = (T)Convert.ChangeType(outputVal,
-                            typeof(T)); //This code is illegal but required and in this case safe
+                        value = (T)Convert.ChangeType(outputVal, typeof(T)); //This code is illegal but required and in this case safe
                         return TaskStatus.Success;
                     }
                 }

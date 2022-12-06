@@ -441,7 +441,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blackboard:
-    variables: []
     references:
     - name: Path
       value: {fileID: 828375660}
@@ -451,9 +450,11 @@ MonoBehaviour:
       value: {fileID: 925384070}
     - name: Player
       value: {fileID: 1267729044}
-  currentTreeStatus: 0
+    variables: []
   chaseRange: 10
   shootRange: 6
+  guardFOV: 70
+  currentTreeStatus: 0
   state: 0
 --- !u!195 &539429223
 NavMeshAgent:
@@ -951,7 +952,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: ce878b857a0f6ac458928a29afac63d7, type: 2}
+      objectReference: {fileID: 9100000, guid: dc91d756cfe545a4790e819d519769a8, type: 2}
     - target: {fileID: -6057140222963153312, guid: 870795822f643f149b69f2c63265ea01,
         type: 3}
       propertyPath: m_ApplyRootMotion
@@ -1821,7 +1822,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: ce878b857a0f6ac458928a29afac63d7, type: 2}
+      objectReference: {fileID: 9100000, guid: 74fbedfff695df945b04f04b1805c930, type: 2}
     - target: {fileID: 8054489430286962190, guid: 15470671b5be14d4bb365b80b14ae9e0,
         type: 3}
       propertyPath: m_ApplyRootMotion
@@ -1882,7 +1883,6 @@ MonoBehaviour:
   rotXSpeed: 3000
   rotYSpeed: 3000
   followTarget: {fileID: 1267729045}
-  smoothFollowFactor: 3
 --- !u!4 &1696898269
 Transform:
   m_ObjectHideFlags: 0
@@ -2270,6 +2270,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 794f0ee09c67de7498fb2d6bcc43074d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  blackboard:
+    references:
+    - name: Player
+      value: {fileID: 1267729044}
+    variables: []
 --- !u!1 &1868206819
 GameObject:
   m_ObjectHideFlags: 0

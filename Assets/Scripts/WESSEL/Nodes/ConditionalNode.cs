@@ -2,16 +2,18 @@ public class ConditionalNode : BTBaseNode
 {
     public override int maxChildCount => 2;
     public delegate bool Condition();
-    private Condition condition;
+    private Condition conditionEvaluator;
+    private string comment;
 
-    public ConditionalNode(Condition c)
+    public ConditionalNode(Condition c, string comment = "Unknown Condition")
     {
-        condition = c;
+        conditionEvaluator = c;
+        this.comment = comment;
     }
     
     public override TaskStatus Run()
     {
-        if (condition.Invoke())
+        if (conditionEvaluator.Invoke())
             return children[0]?.RunNode() ?? TaskStatus.Failed;
         return children[1]?.RunNode() ?? TaskStatus.Failed;
     }

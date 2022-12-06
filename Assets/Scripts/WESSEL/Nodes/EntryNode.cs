@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class EntryNode : BTBaseNode
 {
     public override int maxChildCount => 1;
