@@ -533,7 +533,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: ce878b857a0f6ac458928a29afac63d7, type: 2}
+      objectReference: {fileID: 9100000, guid: 572c44f5096355d4ea957ff09013c4f0, type: 2}
     - target: {fileID: -6057140222963153312, guid: 78e920477e9e73d46b3bf369e8c3b4a1,
         type: 3}
       propertyPath: m_ApplyRootMotion
@@ -1101,6 +1101,7 @@ GameObject:
   - component: {fileID: 1267729047}
   - component: {fileID: 1267729048}
   - component: {fileID: 1267729050}
+  - component: {fileID: 1267729051}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -1197,6 +1198,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08447b9fc1b6a604e83740ab2524e909, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!208 &1267729051
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1267729044}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 0
+  m_Extents: {x: 0.5, y: 1, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &1386852920
 GameObject:
   m_ObjectHideFlags: 0

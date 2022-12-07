@@ -4,14 +4,43 @@ using Object = UnityEngine.Object;
 
 public class BlackboardOperation<T> : BTBaseNode
 {
-    public T value = default;
+    public delegate T LambdaValue();
+    public T valueA;
+
+    public T value
+    {
+        get
+        {
+            if (valueB != null)
+                return valueB.Invoke();
+            return valueA;
+        }
+    }
+    public LambdaValue valueB;
     private string name;
     private BlackboardOperationType type;
+    
+    public BlackboardOperation(string name, BlackboardOperationType type)
+    {
+        this.name = name;
+        valueA = default;
+        valueB = null;
+        this.type = type;
+    }
     
     public BlackboardOperation(string name, BlackboardOperationType type, T value = default)
     {
         this.name = name;
-        this.value = value;
+        valueA = value;
+        valueB = null;
+        this.type = type;
+    }
+    
+    public BlackboardOperation(string name, BlackboardOperationType type, LambdaValue valueB = null)
+    {
+        this.name = name;
+        valueA = default;
+        this.valueB = valueB;
         this.type = type;
     }
 
@@ -22,7 +51,7 @@ public class BlackboardOperation<T> : BTBaseNode
             case BlackboardOperationType.ReadVariable:
                 if (blackboard.TryGetVariable(name, out T val))
                 {
-                    value = val;
+                    valueA = val;
                     return TaskStatus.Success;
                 }
                 break;
@@ -35,7 +64,7 @@ public class BlackboardOperation<T> : BTBaseNode
                 {
                     if (typeof(T) == outputVal.GetType())
                     {
-                        value = (T)Convert.ChangeType(outputVal, typeof(T)); //This code is illegal but required and in this case safe
+                        valueA = (T)Convert.ChangeType(outputVal, typeof(T)); //This code is illegal but required and in this case safe
                         return TaskStatus.Success;
                     }
                 }

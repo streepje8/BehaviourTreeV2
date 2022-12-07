@@ -98,6 +98,7 @@ public class Guard : MonoBehaviour
                     )
                 )
             ).Build();
+        
         Debug.Log(tree.ToPlantUML());
     }
 
