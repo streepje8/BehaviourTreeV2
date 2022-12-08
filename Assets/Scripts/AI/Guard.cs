@@ -6,7 +6,8 @@ public enum GuardState
     Patrol,
     WeaponSeach,
     Chase,
-    Shoot
+    Shoot,
+    Confused
 }
 
 public class Guard : MonoBehaviour
@@ -15,6 +16,7 @@ public class Guard : MonoBehaviour
     public float chaseRange = 5f;
     public float shootRange = 2f;
     public float guardFOV = 70f;
+    public float smokedTime = 0f;
     private BTBaseNode tree;
     
     //Debug
@@ -30,7 +32,7 @@ public class Guard : MonoBehaviour
             .Append(new SequenceNode()
                 .Append(new BlackboardOperation<int>("guardState",BlackboardOperationType.ReadVariable))
                 .Append(new SetAnimatorParameter("guardState",AnimatorParameterType.Int))
-                .Append(new ConditionalNode(() => blackboard.TryGetVariable("guardState", out GuardState state) && state == GuardState.Patrol, "guardState == Patrol")
+                .Append(new ConditionalNode(() => blackboard.TryGetVariable("guardState", out GuardState state) && state is GuardState.Patrol, "guardState == Patrol")
                     .Append(new SequenceNode()
                         .Append(new BlackboardOperation<AIPath>("Path",BlackboardOperationType.ReadReference))
                         .Append(new AISetPath())
@@ -89,24 +91,39 @@ public class Guard : MonoBehaviour
                                             .Append(new DebugLogNode("Shoot sound!"))
                                             .Append(new BlackboardOperation<float>("cooldown",BlackboardOperationType.WriteVariable,2f))
                                         )
-                                        .Append(new DecrementBlackboardValue<float>("cooldown",1f,SpecialOperations.FixedDeltaTime))
+                                        .Append(new SequenceNode()
+                                            .Append(new DecrementBlackboardValue<float>("cooldown",1f,SpecialOperations.FixedDeltaTime))
+                                            .Append(new ConditionalNode(() => smokedTime > 0f)
+                                                .Append(new BlackboardOperation<GuardState>("guardState", BlackboardOperationType.WriteVariable, GuardState.Confused))
+                                                .Append(new EmptyNode())
+                                            )
                                         )
+                                    )
                                 )
-                                .Append(new DebugLogNode("Invalid State!"))
+                                .Append(new ConditionalNode(() => blackboard.TryGetVariable("guardState", out GuardState state) && state is GuardState.Confused, "guardState == Confused")
+                                    .Append(new SequenceNode()
+                                        .Append(new ConditionalNode(() => smokedTime <= 0f)
+                                            .Append(new BlackboardOperation<GuardState>("guardState", BlackboardOperationType.WriteVariable, GuardState.Chase))
+                                            .Append(new EmptyNode())
+                                        )
+                                    )
+                                    .Append(new DebugLogNode("Invalid State!"))
                                 )
+                            )
                         )
                     )
                 )
             ).Build();
-        
-        Debug.Log(tree.ToPlantUML());
+        //Debug.Log(tree.ToPlantUML());
     }
 
     private void FixedUpdate()
     {
         tree?.RunNode();
         blackboard.TryGetVariable("guardState", out GuardState stat);
-        state = stat;   
+        state = stat;
+        if (smokedTime > 0)
+            smokedTime -= Time.deltaTime;
     }
 
     private void OnDrawGizmos()

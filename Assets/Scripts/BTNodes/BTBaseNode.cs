@@ -34,7 +34,6 @@ public abstract class BTBaseNode
     
     public BTBaseNode Build()
     {
-        blackboard?.BuildToDictionary();
         Initialize();
         return this;
     }

@@ -50,6 +50,8 @@ public class WBlackboard
     [HideInInspector] public Dictionary<string, Object> realtimeReferences = new Dictionary<string, Object>();
     [HideInInspector] public BTBaseNode lastExecutedNode = null;
 
+    private bool isInitialized = false;
+    
     /// <summary>
     /// Builds the editor set values in to the realtime dictonaries
     /// </summary>
@@ -57,6 +59,7 @@ public class WBlackboard
     {
         variables.ForEach(x => realtimeVariables.Add(x.name,x.value));
         references.ForEach(x => realtimeReferences.Add(x.name,x.value));
+        isInitialized = true;
     }
 
     /// <summary>
@@ -67,6 +70,7 @@ public class WBlackboard
     /// <returns>If the variable was overwritten</returns>
     public bool SetVariable(string name, object value)
     {
+        if(!isInitialized) BuildToDictionary();
         if (realtimeVariables.ContainsKey(name))
         {
             realtimeVariables[name] = value;
@@ -87,6 +91,7 @@ public class WBlackboard
     /// <returns>If the reference was overwritten</returns>
     public bool SetReference(string name, Object value)
     {
+        if(!isInitialized) BuildToDictionary();
         if (realtimeReferences.ContainsKey(name))
         {
             realtimeReferences[name] = value;
@@ -108,12 +113,15 @@ public class WBlackboard
     /// <returns>If the variable was resolved</returns>
     public bool TryGetVariable<T>(string name, out T value)
     {
+        if(!isInitialized) BuildToDictionary();
         if (realtimeVariables.TryGetValue(name, out object val))
         {
             bool isValidCast = true;
             try
             { _ = (T)val; }
+#pragma warning disable CS0168
             catch (Exception e)
+#pragma warning restore CS0168
             { isValidCast = false;}
             if (val.GetType() == typeof(T) || val.GetType().IsSubclassOf(typeof(T)) || isValidCast)
             {
@@ -134,6 +142,7 @@ public class WBlackboard
     /// <returns>If the reference was resolved</returns>
     public bool TryGetReference<T>(string name, out T value) where T : Object
     {
+        if(!isInitialized) BuildToDictionary();
         if (realtimeReferences.TryGetValue(name, out Object val))
         {
             if (val.GetType() == typeof(T) || val.GetType().IsSubclassOf(typeof(T)))
