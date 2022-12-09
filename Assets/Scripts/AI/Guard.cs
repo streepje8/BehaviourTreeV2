@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using TMPro;
+using UnityEditor;
 using UnityEngine;
 
 public enum GuardState
@@ -17,12 +18,9 @@ public class Guard : MonoBehaviour
     public float shootRange = 2f;
     public float guardFOV = 70f;
     public float smokedTime = 0f;
+    public TMP_Text infoText;
+    public GuardState state;
     private BTBaseNode tree;
-    
-    //Debug
-    public TaskStatus currentTreeStatus;
-    public GuardState state = GuardState.Patrol;
-
     private void Start()
     {
         blackboard.SetVariable("guardState", GuardState.Patrol);
@@ -120,10 +118,14 @@ public class Guard : MonoBehaviour
     private void FixedUpdate()
     {
         tree?.RunNode();
-        blackboard.TryGetVariable("guardState", out GuardState stat);
-        state = stat;
+        if (blackboard.TryGetVariable("guardState", out GuardState newState))
+        {
+            state = newState;
+            infoText.text = "State: " + state;
+        }
         if (smokedTime > 0)
             smokedTime -= Time.deltaTime;
+        
     }
 
     private void OnDrawGizmos()

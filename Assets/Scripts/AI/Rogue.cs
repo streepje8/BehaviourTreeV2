@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEngine;
 
 public enum RogueState
 {
@@ -11,6 +12,7 @@ public class Rogue : MonoBehaviour
 {
     public WBlackboard blackboard;
     public float distanceFromWall = 1.5f;
+    public TMP_Text infoText;
     private BTBaseNode tree;
 
     private void Start()
@@ -106,6 +108,10 @@ public class Rogue : MonoBehaviour
     private void FixedUpdate()
     {
         tree?.RunNode();
+        if (blackboard.TryGetVariable("rogueState", out RogueState state))
+        {
+            infoText.text = "State: " + state;
+        }
     }
 
     //private void OnDrawGizmos()
